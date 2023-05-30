@@ -65,4 +65,6 @@ Feel free to implement your own basic auth or whatever. I operate this in a cont
 ## Reliability
 Won't it be bad if your uptime monitor goes down instead of your app?
 
-Typical production deployment practices will help prevent that from happening. Or you could deploy a new instance of this app for every instance of this app you deploy. ;p
+Typical production deployment practices will help prevent that from happening. Use a process manager PM2, Docker etc+.
+
+On top of that, you could use https://uptimerobot.com/ or https://betterstack.com/uptime and ping the root path of your URL.
