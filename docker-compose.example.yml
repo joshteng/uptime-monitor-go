@@ -1,0 +1,22 @@
+services:
+  uptime-monitor:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: uptime-monitor
+    container_name: uptime-monitor
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SQLITE_PATH=./data/uptime-monitor.sql
+    restart: unless-stopped
+
+  # optionally, you can choose to expose your service via Cloudflare's Zerotrust Tunnel or you can do the conventional reverse proxy -> you may have to modify this docker compose file to expose port 8080 which is the default port uptime monitor will run at
+  cloudflared:
+    image: erisamoe/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${UPTIME_TUNNEL_TOKEN}
+    depends_on:
+      - uptime-monitor
