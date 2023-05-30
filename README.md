@@ -32,6 +32,8 @@ By default, it runs on port 8080.
 
 Alternatively, a `Dockerfile` and a `docker-compose.example.yml` is included.
 
+Also, an example `fly.example.toml` is provided for deployment to fly.io
+
 ## Client Side
 Right now, there is only a JS SDK https://www.npmjs.com/package/uptime-monitor-sdk source code in this repo: `/packages/sdk`
 

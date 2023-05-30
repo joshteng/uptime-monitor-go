@@ -1,0 +1,19 @@
+app = "my-uptime-monitor"
+primary_region = "fra"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[mounts]
+  source="my_uptime_monitor"
+  destination="/data"
+
+
+# fly launch --ha=false
+# fly volume create my_uptime_monitor -r fra -s 1
+# fly deploy
+# fly secrets set SQLITE_PATH=/data/uptime-monitor.sql
