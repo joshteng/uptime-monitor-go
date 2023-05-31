@@ -27,7 +27,7 @@ func loadEnvVariables() {
 }
 
 func setupRoutes() {
-	http.HandleFunc("/", sayHello)
+	http.HandleFunc("/", home)
 	http.HandleFunc("/records", records.Create)
 
 	fmt.Printf("Starting server at port 8080\n")
@@ -36,7 +36,7 @@ func setupRoutes() {
 	}
 }
 
-func sayHello(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, r *http.Request) {
 	response := map[string]interface{}{
 		"success": true,
 		"message": "Hello from Uptime Monitor!",
