@@ -1,5 +1,16 @@
 import { sleep } from "./lib/utils";
 
+export interface UptimeConfig {
+  host: URL,
+  serviceName: string,
+  secondsBetweenHeartbeat: number,
+  secondsBetweenAlerts: number,
+  maxAlertsPerDownTime: number,
+  pushoverToken?: string,
+  pushoverGroup?: string,
+  discordWebhook?: string,
+}
+
 class FetchError extends Error {
   constructor(message: string) {
     super(message);
@@ -18,11 +29,13 @@ class Uptime {
     private readonly maxAlertsPerDownTime: number,
     private readonly pushoverToken: string,
     private readonly pushoverGroup: string,
+    private readonly discordWebhook: string,
   ) {
-    if (secondsBetweenHeartbeat < 15) throw "secondsBetweenHeartbeat should be at least 15 seconds"
-    if (secondsBetweenAlerts < 60) throw "secondsBetweenAlerts should be at least 60 seconds"
+    if (serviceName.length > 5) throw "serviceName should be at least 6 chracters"
+    if (secondsBetweenHeartbeat < 10) throw "secondsBetweenHeartbeat should be at least 10 seconds"
+    if (secondsBetweenAlerts < 10) throw "secondsBetweenAlerts should be at least 10 seconds"
     if (maxAlertsPerDownTime < 1) throw "maxAlertsPerDownTime should be at least 1"
-    if (!pushoverGroup || !pushoverToken) throw "Missing pushover token and / or group"
+    if (!discordWebhook && !(pushoverGroup && pushoverToken)) throw "Pass either discordWebhook or pushoverGroup + pushoverToken"
     this.alive = true;
   }
 
@@ -56,7 +69,8 @@ class Uptime {
               "secondsBetweenAlerts": this.secondsBetweenAlerts,
               "maxAlertsPerDownTime": this.maxAlertsPerDownTime,
               "pushoverToken": this.pushoverToken,
-              "pushoverGroup": this.pushoverGroup
+              "pushoverGroup": this.pushoverGroup,
+              "discordWebhook": this.discordWebhook
             })
           }
         )
@@ -83,7 +97,8 @@ class Uptime {
           "secondsBetweenAlerts": this.secondsBetweenAlerts,
           "maxAlertsPerDownTime": 0,
           "pushoverToken": this.pushoverToken,
-          "pushoverGroup": this.pushoverGroup
+          "pushoverGroup": this.pushoverGroup,
+          "discordWebhook": this.discordWebhook
         })
       }
     )
@@ -94,15 +109,16 @@ class Uptime {
   }
 }
 
-export function UptimeMonitor(
-  host: URL,
-  serviceName: string,
-  secondsBetweenHeartbeat: number,
-  secondsBetweenAlerts: number,
-  maxAlertsPerDownTime: number,
-  pushoverToken: string,
-  pushoverGroup: string,
-): Uptime {
+export function UptimeMonitor({
+  host,
+  serviceName,
+  secondsBetweenHeartbeat,
+  secondsBetweenAlerts,
+  maxAlertsPerDownTime,
+  pushoverToken = "",
+  pushoverGroup = "",
+  discordWebhook = "",
+}: UptimeConfig): Uptime {
   const uptime = new Uptime(
     host,
     serviceName,
@@ -110,7 +126,8 @@ export function UptimeMonitor(
     secondsBetweenAlerts,
     maxAlertsPerDownTime,
     pushoverToken,
-    pushoverGroup
+    pushoverGroup,
+    discordWebhook
   )
   return uptime
 }

@@ -17,6 +17,7 @@ type Record struct {
 	IsActive                bool
 	PushoverToken           string
 	PushoverGroup           string
+	DiscordWebhook          string
 	LastAlertAt             time.Time
 }
 
@@ -41,6 +42,7 @@ func CreateOrUpdateRecord(record Record) Record {
 		"last_alert_at":             record.LastAlertAt,
 		"pushover_token":            record.PushoverToken,
 		"pushover_group":            record.PushoverGroup,
+		"discord_webhook":           record.DiscordWebhook,
 	})
 	return _record
 }

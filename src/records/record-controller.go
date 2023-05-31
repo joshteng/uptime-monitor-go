@@ -60,6 +60,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		LastAlertAt:             time.Now().Add(-time.Second * time.Duration(recordInput.SecondsBetweenAlerts)),
 		PushoverToken:           recordInput.PushoverToken,
 		PushoverGroup:           recordInput.PushoverGroup,
+		DiscordWebhook:          recordInput.DiscordWebhook,
 	}
 
 	updatedRecord := models.CreateOrUpdateRecord(record)
@@ -111,6 +112,5 @@ func transformToDto(record models.Record) RecordInputDto {
 		SecondsBetweenHeartbeat: record.SecondsBetweenHeartbeat,
 		MaxAlertsPerDownTime:    record.MaxAlertsPerDownTime,
 		SecondsBetweenAlerts:    record.SecondsBetweenAlerts,
-		PushoverGroup:           record.PushoverGroup,
 	}
 }

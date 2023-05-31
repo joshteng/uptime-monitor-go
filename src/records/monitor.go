@@ -37,7 +37,7 @@ func detect() {
 			log.Println(msg)
 
 			// send notification
-			sendAlert(msg, record.PushoverToken, record.PushoverGroup)
+			sendAlert(msg, record.PushoverToken, record.PushoverGroup, record.DiscordWebhook)
 
 			record.LastAlertAt = now
 
@@ -54,31 +54,60 @@ func detect() {
 }
 
 type PushoverMessage struct {
-	Token   string `json:"token"`
-	User    string `json:"user"`
-	Message string `json:"message"`
+	Token         string `json:"token"`
+	User          string `json:"user"`
+	Message       string `json:"message"`
 }
 
-func sendAlert(msg, pushoverToken, pushoverGroup string) {
-	pushoverMessage := PushoverMessage{
-		Token:   pushoverToken,
-		User:    pushoverGroup,
-		Message: msg,
+type DiscordMessage struct {
+	Content string `json:"content"`
+}
+
+func sendAlert(msg, pushoverToken, pushoverGroup, discordWebhook string) {
+	if len(pushoverGroup) > 0 && len(pushoverToken) > 0 {
+		pushoverMessage := PushoverMessage{
+			Token:   pushoverToken,
+			User:    pushoverGroup,
+			Message: msg,
+		}
+
+		reqBody, err := json.Marshal(pushoverMessage)
+		bodyReader := bytes.NewReader(reqBody)
+
+		if err != nil {
+			log.Fatal("Failed to create request body")
+		}
+
+		client := &http.Client{}
+		req, _ := http.NewRequest(http.MethodPost, "https://api.pushover.net/1/messages.json", bodyReader)
+		req.Header.Set("Content-type", "application/json")
+
+		resp, err := client.Do(req)
+		if err != nil || resp.StatusCode != 200 {
+			log.Fatal(err)
+		}
 	}
 
-	reqBody, err := json.Marshal(pushoverMessage)
-	bodyReader := bytes.NewReader(reqBody)
+	if len(discordWebhook) > 0 {
+		discordMessage := DiscordMessage{
+			Content: msg,
+		}
 
-	if err != nil {
-		log.Fatal("Failed to create request body")
-	}
+		reqBody, err := json.Marshal(discordMessage)
+		bodyReader := bytes.NewReader(reqBody)
 
-	client := &http.Client{}
-	req, _ := http.NewRequest(http.MethodPost, "https://api.pushover.net/1/messages.json", bodyReader)
-	req.Header.Set("Content-type", "application/json")
+		if err != nil {
+			log.Fatal("Failed to create request body")
+		}
 
-	resp, err := client.Do(req)
-	if err != nil || resp.StatusCode != 200 {
-		log.Fatal(err)
+		client := &http.Client{}
+		req, _ := http.NewRequest(http.MethodPost, discordWebhook, bodyReader)
+		req.Header.Set("Content-type", "application/json")
+
+		resp, err := client.Do(req)
+		if err != nil || resp.StatusCode > 299 || resp.StatusCode < 200 {
+			log.Println(resp.StatusCode)
+			log.Fatal(err)
+		}
 	}
 }
