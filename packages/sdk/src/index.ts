@@ -19,9 +19,9 @@ class Uptime {
     private readonly pushoverToken: string,
     private readonly pushoverGroup: string,
   ) {
-    if (secondsBetweenHeartbeat < 5) throw "secondsBetweenHeartbeat cannot be less than 5 seconds"
-    if (secondsBetweenAlerts < 5) throw "secondsBetweenAlerts cannot be less than 5 seconds"
-    if (maxAlertsPerDownTime < 1) throw "maxAlertsPerDownTime should be greater than 1"
+    if (secondsBetweenHeartbeat < 15) throw "secondsBetweenHeartbeat should be at least 15 seconds"
+    if (secondsBetweenAlerts < 60) throw "secondsBetweenAlerts should be at least 60 seconds"
+    if (maxAlertsPerDownTime < 1) throw "maxAlertsPerDownTime should be at least 1"
     if (!pushoverGroup || !pushoverToken) throw "Missing pushover token and / or group"
     this.alive = true;
   }
@@ -61,7 +61,7 @@ class Uptime {
           }
         )
 
-        await sleep((this.secondsBetweenHeartbeat - 2) * 1000)
+        await sleep((this.secondsBetweenHeartbeat - Math.floor(this.secondsBetweenHeartbeat / 2)) * 1000)
       } catch (err) {
         console.log("Heartbeat failed. Retrying.....")
         console.debug(err)
