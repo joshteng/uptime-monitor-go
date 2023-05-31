@@ -1,10 +1,6 @@
 # Uptime Monitor JS SDK
 
-This SDK is used on the client side to repeatedly ping the Uptime Monitor server. When the client side terminates / crashes and the server stops receiving pings, alerts will be pushed via Pushover.
-
-Pushover is configured on the server side.
-
-You will need to host the Uptime Monitor backend and point a domain to it.
+This SDK is used on the client side to repeatedly ping the Uptime Monitor server. When the client side terminates / crashes and the server stops receiving pings, alerts will be pushed via Pushover and/or Discord.
 
 ## Usage
 ```bash
@@ -13,20 +9,31 @@ npm i uptime-monitor-sdk
 
 ## To maintain a session
 ```js
-import { UptimeMonitor } from "uptime-monitor-sdk";
+import { UptimeMonitor, type UptimeConfig } from "uptime-monitor-sdk";
 
-const url = new URL("https://uptime.example.com")
+const uptimeConfig: UptimeConfig = {
+  host: new URL("https://uptime.example.com"),
+  serviceName: 'Example',
+  secondsBetweenHeartbeat: 60, // expected heartbeat. if we miss a heartbeat over 60 seconds, an alert is pushed
+  secondsBetweenAlerts: 180, // every 3 minutes
+  maxAlertsPerDownTime: 10, // maximum number of times you want to be alerted
+  pushoverToken: "", // obtain from pushover (optional)
+  pushoverGroup: "", // obtain from pushover (optional)
+  discordWebhook: "" // obtain from discord (optional)
+} // note: you can use either Pushover or Discord or both
 
-UptimeMonitor(url, 'Name of App', 10, 60, 10, "<PUSHOVER_TOKEN>", "<PUSHOVER_GROUP>").init() // notice the `init()`!
+UptimeMonitor(uptimeConfig).init() // notice the `init()`!
 ```
 
 ## To terminate a session
 ```js
-import { UptimeMonitor } from "uptime-monitor-sdk";
+// like the above code but we call terminate instead of init()
+UptimeMonitor(uptimeConfig).terminate()
 
-const url = new URL("https://uptime.example.com")
+// for convenient, init() method returns an instance of the UptimeMonitor
+const uptime = UptimeMonitor(uptimeConfig)
 
-const uptime = UptimeMonitor(url, 'Name of App', 10, 60, 10, "<PUSHOVER_TOKEN>", "<PUSHOVER_GROUP>")
+// some other code
 
 uptime.terminate()
 ```
@@ -39,17 +46,18 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const url = new URL("https://uptime.example.com")
+const uptimeConfig: UptimeConfig = {
+  host: new URL("https://uptime.example.com"),
+  serviceName: 'Example',
+  secondsBetweenHeartbeat: 60, // expected heartbeat. if we miss a heartbeat over 60 seconds, an alert is pushed
+  secondsBetweenAlerts: 180, // every 3 minutes
+  maxAlertsPerDownTime: 10, // maximum number of times you want to be alerted
+  pushoverToken: "", // obtain from pushover (optional)
+  pushoverGroup: "", // obtain from pushover (optional)
+  discordWebhook: "" // obtain from discord (optional)
+} // note: you can use either Pushover or Discord or both
 
-const uptime = UptimeMonitor(
-  url,
-  'Example',
-  10,
-  60,
-  10,
-  "<PUSHOVER_TOKEN>",
-  "<PUSHOVER_GROUP>",
-).init()
+const uptime = UptimeMonitor(uptimeConfig).init()
 
 async function main(fn) {
   while (true) {
@@ -68,9 +76,6 @@ main(() => uptime.terminate())
 ```
 
 ## Constructor Parameters
-```js
-UptimeMonitor(url, serviceName, secondsBetweenHeartbeat, secondsBetweenAlerts, maxAlertsPerDownTime, pushoverToken, pushoverGroup)
-```
 
 |Parameters|Type|Description|
 |---|---|---|
@@ -81,6 +86,7 @@ UptimeMonitor(url, serviceName, secondsBetweenHeartbeat, secondsBetweenAlerts, m
 |maxAlertsPerDownTime|number|A whole number of the max number of alerts you will receive before notification stops|
 |pushoverToken|string|Obtain this from pushover.net|
 |pushoverGroup|string|Obtain this from pushover.net|
+|discordWebhook|URL string|Obtain this from your Discord server|
 
 ## Calling `init`
 
