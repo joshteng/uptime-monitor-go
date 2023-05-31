@@ -7,4 +7,5 @@ type RecordInputDto struct {
 	SecondsBetweenAlerts    int64  `json:"secondsBetweenAlerts"`
 	PushoverToken           string `json:"pushoverToken"`
 	PushoverGroup           string `json:"pushoverGroup"`
+	DiscordWebhook          string `json:"discordWebhook"`
 }
