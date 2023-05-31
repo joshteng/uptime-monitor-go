@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsup",
     "start": "npm run build -- --watch",
-    "example": "dotenv -e .env npx ts-node examples/index.ts",
+    "experiment": "dotenv -e .env npx ts-node experiments/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
