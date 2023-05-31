@@ -88,6 +88,8 @@ main(() => uptime.terminate())
 |pushoverGroup|string|Obtain this from pushover.net|
 |discordWebhook|URL string|Obtain this from your Discord server|
 
+Note: You can use either Pushover or Discord or both. Simply omit whichever you don't need.
+
 ## Calling `init`
 
 You need to call `init()` in order to do periodic pings to uptime backend!

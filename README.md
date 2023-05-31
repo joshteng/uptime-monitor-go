@@ -7,7 +7,7 @@ Great for processes and microservices that do not expose any ports or endpoints 
 This is a rewrite of https://github.com/joshteng/uptime-monitor in Golang.
 
 ## How it works
-It sends a [Pushover](https://pushover.net/) notification whenever your service stops sending a pulse (see endpoint below).
+It sends a [Pushover](https://pushover.net/) notification and/or Discord message whenever your service stops sending a pulse (see endpoint below).
 
 This app runs a loop to to check which services are down in addition to a HTTP server that accepts updates from services.
 
@@ -43,10 +43,10 @@ Otherwise, see below:
 
 ## Creating or Updating a service (to let our Go app know that our service exists or is still alive)
 Send a HTTP POST request to /records
-```curl
+```sh
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"serviceName": "<YOUR_SERVICE_NAME>", "secondsBetweenHeartbeat": 60, "secondsBetweenAlerts": 600, "maxAlertsPerDownTime": 10, "pushoverToken": "<YOUR_PUSHOVER_TOKEN>, "pushoverGroup": "<YOUR_PUSHOVER_GROUP>"}' \
-  http://localhost:3000/records
+  -d '{"serviceName": "<YOUR_SERVICE_NAME>", "secondsBetweenHeartbeat": 60, "secondsBetweenAlerts": 600, "maxAlertsPerDownTime": 10, "pushoverToken": "<YOUR_PUSHOVER_TOKEN>, "pushoverGroup": "<YOUR_PUSHOVER_GROUP>", "discordWebhook": "<YOUR_DISCORD_WEBHOOK>"}' \
+  http://localhost:8080/records
 ```
 
 ## Endpoint Variables Defined
@@ -58,7 +58,9 @@ curl -X POST -H "Content-Type: application/json" \
 |maxAlertsPerDownTime|number|A whole number of the max number of alerts you will receive before notification stops|
 |pushoverToken|string|Obtain this from pushover.net|
 |pushoverGroup|string|Obtain this from pushover.net|
+|discordWebhook|URL string|Obtain this from your Discord server|
 
+Note: You can use either Pushover or Discord or both. Simply omit whichever you don't need.
 ## Security
 Feel free to implement your own basic auth or whatever. I operate this in a controlled private network environment.
 
