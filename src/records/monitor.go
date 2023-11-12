@@ -64,10 +64,7 @@ type DiscordMessage struct {
 }
 
 func sendAlert(msg, pushoverToken, pushoverGroup, discordWebhook string) {
-	log.Println('1')
 	if len(pushoverGroup) > 0 && len(pushoverToken) > 0 {
-		log.Println('2')
-
 		pushoverMessage := PushoverMessage{
 			Token:   pushoverToken,
 			User:    pushoverGroup,
@@ -88,8 +85,6 @@ func sendAlert(msg, pushoverToken, pushoverGroup, discordWebhook string) {
 		resp, err := client.Do(req)
 		if err != nil || resp.StatusCode != 200 {
 			log.Fatal(err)
-		} else {
-			log.Println("Sent pushover")
 		}
 	}
 
