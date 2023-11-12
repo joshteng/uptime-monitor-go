@@ -54,9 +54,9 @@ func detect() {
 }
 
 type PushoverMessage struct {
-	Token         string `json:"token"`
-	User          string `json:"user"`
-	Message       string `json:"message"`
+	Token   string `json:"token"`
+	User    string `json:"user"`
+	Message string `json:"message"`
 }
 
 type DiscordMessage struct {
@@ -85,6 +85,8 @@ func sendAlert(msg, pushoverToken, pushoverGroup, discordWebhook string) {
 		resp, err := client.Do(req)
 		if err != nil || resp.StatusCode != 200 {
 			log.Fatal(err)
+		} else {
+			log.Println("Sent pushover")
 		}
 	}
 
